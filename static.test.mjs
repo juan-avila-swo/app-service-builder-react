@@ -90,7 +90,7 @@ test('production preview serves SPA routes, assets, and JSON', { timeout: 20000 
   assert.equal(root.status, 200)
   assert.match(root.headers.get('content-type'), /text\/html/)
   const html = await root.text()
-  assert.match(html, /<title>App Service Builder: React sample<\/title>/)
+  assert.match(html, /<title>VIVA\+ — Historias que te atrapan<\/title>/)
   assert.match(html, /<div id="root"><\/div>/)
   assert.doesNotMatch(html, /\/src\/|node_modules/)
 

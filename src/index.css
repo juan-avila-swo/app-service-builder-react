@@ -1,6 +1,6 @@
 :root {
-  color: #172033;
-  background: #f4f7fb;
+  color: #fff;
+  background: #100b21;
   font-family: Inter, ui-sans-serif, system-ui, sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -12,10 +12,21 @@
   box-sizing: border-box;
 }
 
+html {
+  min-width: 20rem;
+  scroll-behavior: smooth;
+}
+
 body {
   min-width: 20rem;
   min-height: 100vh;
   margin: 0;
+  background: #100b21;
+}
+
+html body {
+  color: #fff;
+  background: #100b21;
 }
 
 button,

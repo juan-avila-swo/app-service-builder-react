@@ -11,22 +11,42 @@ const appInfo = {
   buildMarker: import.meta.env.VITE_BUILD_MARKER ?? 'local',
 }
 
-function Layout({ eyebrow, title, children }) {
+const shows = [
+  { title: 'Neón salvaje', category: 'Acción', tag: 'TOP 10', palette: 'neon', mark: 'NS' },
+  { title: 'Planeta pop', category: 'Aventura', tag: 'NUEVO', palette: 'pop', mark: 'PP' },
+  { title: 'La última ola', category: 'Drama', tag: 'ORIGINAL', palette: 'wave', mark: 'LO' },
+  { title: 'Modo leyenda', category: 'Acción', tag: 'TENDENCIA', palette: 'legend', mark: 'ML' },
+]
+
+const categories = ['Todo', 'Acción', 'Aventura', 'Drama']
+
+function Header() {
   return (
-    <main className="sample-sheet">
-      <header className="sample-header">
-        <Link className="sample-brand" to="/"><img src="/brand/builder.svg" alt="" width="32" height="32" />App Service Builder</Link>
-        <nav aria-label="Documentation">
-          <a href="https://react.dev/">React documentation</a>
-          <a href="https://builder.appservice.azure.com/docs/">App Service Builder documentation</a>
-        </nav>
-      </header>
-      <div className="sample-content">
-      <div className="ecosystem-logo"><img src="/brand/react.png" alt="" width="52" height="52" /><span>React</span></div>
-      <p className="eyebrow">{eyebrow}</p>
-      <h1>{title}</h1>
+    <header className="stream-header">
+      <Link className="stream-logo" to="/" aria-label="Viva, inicio">
+        <span className="logo-mark">V</span>VIVA<span className="logo-plus">+</span>
+      </Link>
+      <nav className="stream-nav" aria-label="Navegación principal">
+        <a href="#inicio">Inicio</a>
+        <a href="#catalogo">Series</a>
+        <a href="#catalogo">Películas</a>
+        <a href="#mi-lista">Mi lista</a>
+      </nav>
+      <button className="profile-button" type="button" aria-label="Perfil de usuario">J</button>
+    </header>
+  )
+}
+
+function Layout({ children }) {
+  return (
+    <main className="stream-app">
+      <Header />
       {children}
-      </div>
+      <footer className="stream-footer">
+        <Link to="/">App Service Builder</Link>
+        <a href="https://react.dev/">Documentación de React</a>
+        <Link to="/products/widget-1">Ruta de prueba</Link>
+      </footer>
     </main>
   )
 }
@@ -34,111 +54,140 @@ function Layout({ eyebrow, title, children }) {
 function Home() {
   const [count, setCount] = useState(0)
   const [checking, setChecking] = useState(false)
-  const [health, setHealth] = useState('Check the static health file without leaving this page.')
+  const [health, setHealth] = useState('Comprueba la conexión del archivo de estado.')
+  const [category, setCategory] = useState('Todo')
+  const [saved, setSaved] = useState(false)
+  const [playing, setPlaying] = useState(false)
+  const visibleShows = category === 'Todo' ? shows : shows.filter((show) => show.category === category)
 
   async function refreshHealth() {
     setChecking(true)
-    setHealth('Checking /health.json…')
+    setHealth('Consultando /health.json…')
     try {
       setHealth(await checkHealth())
     } catch {
-      setHealth('Static health check failed. Retry, or inspect /health.json and your static host configuration.')
+      setHealth('No se pudo consultar el estado. Revisa /health.json e inténtalo de nuevo.')
     } finally {
       setChecking(false)
     }
   }
 
   return (
-    <Layout eyebrow="App Service Builder / React" title="React Vite SPA is running">
-      <p>
-        This sample renders in your browser with React and Vite.
-      </p>
-
-      <nav aria-label="Test routes">
-        <Link className="button" to="/products/widget-1">
-          Open the deep route
-        </Link>
-        <button className="secondary" type="button" disabled={checking} onClick={refreshHealth}>
-          {checking ? 'Checking health…' : 'Check static health'}
-        </button>
-        <a href="/version.json">View version JSON</a>
-      </nav>
-      <p className="health-result" role="status">{health}</p>
-
-      <button
-        className="counter"
-        type="button"
-        onClick={() => setCount((current) => current + 1)}
-      >
-        Interaction count: {count}
-      </button>
-
-      <section aria-labelledby="deployment-heading">
-        <h2 id="deployment-heading">Deployment details</h2>
-        <dl>
-          <div>
-            <dt>Application</dt>
-            <dd>
-              {appInfo.app} {appInfo.version}
-            </dd>
+    <Layout>
+      <section className="hero" id="inicio">
+        <div className="hero-copy">
+          <p className="eyebrow"><span className="live-dot" /> VIVA ORIGINAL · ESTRENO</p>
+          <h1>Tu próxima<br />obsesión <span>empieza aquí.</span></h1>
+          <p className="hero-description">
+            Historias que te sacuden. Mundos que no quieres dejar. Dale play a algo extraordinario.
+          </p>
+          <div className="hero-meta"><span>2025</span><span>16+</span><span>1 temporada</span><span className="quality">4K UHD</span></div>
+          <div className="hero-actions">
+            <button className="play-button" type="button" onClick={() => setPlaying((current) => !current)}>
+              <span aria-hidden="true">{playing ? 'Ⅱ' : '▶'}</span>{playing ? 'Pausar avance' : 'Ver ahora'}
+            </button>
+            <button className="list-button" id="mi-lista" type="button" onClick={() => setSaved((current) => !current)}>
+              <span aria-hidden="true">{saved ? '✓' : '+'}</span>{saved ? 'En mi lista' : 'Mi lista'}
+            </button>
           </div>
-          <div>
-            <dt>Framework</dt>
-            <dd>{appInfo.framework}</dd>
-          </div>
-          <div>
-            <dt>Deployment</dt>
-            <dd>{appInfo.deploymentMarker}</dd>
-          </div>
-          <div>
-            <dt>Build setting</dt>
-            <dd>{appInfo.buildMarker}</dd>
-          </div>
-        </dl>
+          {playing && <p className="play-status" role="status">Reproduciendo el avance de Neón salvaje</p>}
+        </div>
+        <div className="hero-art" aria-label="Arte gráfico de Neón salvaje" role="img">
+          <div className="hero-sun" />
+          <div className="hero-orbit orbit-one" />
+          <div className="hero-orbit orbit-two" />
+          <span className="hero-stamp">VIVA<br />ORIGINAL</span>
+          <span className="hero-title-art">NEÓN<br /><i>SALVAJE</i></span>
+          <span className="hero-art-caption">LA CIUDAD NUNCA DUERME</span>
+        </div>
       </section>
-      <details>
-        <summary>Customize this sample</summary>
-        <p>In your fork, edit the home page in <code>src/App.jsx</code> and the styles in
-          <code> public/brand/family.v1.css</code>. Commit your changes and deploy your fork through your Builder App.</p>
-      </details>
-      <details>
-        <summary>Logo sources &amp; notices</summary>
-        <p>Unmodified <a href="https://react.dev/">React artwork</a> identifies this framework.
-          React is a trademark of Meta Platforms, Inc. App Service Builder uses its
-          supplied official mark. No endorsement implied.</p>
-      </details>
+
+      <section className="catalog" id="catalogo" aria-labelledby="catalog-title">
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">ESCOGIDO PARA TI</p>
+            <h2 id="catalog-title">Ahora mismo <span>en VIVA</span></h2>
+          </div>
+          <div className="category-filters" aria-label="Filtrar por género">
+            {categories.map((item) => (
+              <button
+                className={category === item ? 'filter-chip active' : 'filter-chip'}
+                key={item}
+                type="button"
+                aria-pressed={category === item}
+                onClick={() => setCategory(item)}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="show-grid">
+          {visibleShows.map((show, index) => (
+            <article className={`show-card ${show.palette}`} key={show.title}>
+              <div className="poster-art">
+                <span className="poster-tag">{show.tag}</span>
+                <span className="poster-symbol">{show.mark}</span>
+                <span className="poster-index">0{index + 1}</span>
+              </div>
+              <div className="show-info">
+                <div><h3>{show.title}</h3><p>{show.category} · Para ti</p></div>
+                <button className="card-play" type="button" aria-label={`Ver ${show.title}`}>▶</button>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="utility-panel" aria-label="Herramientas de muestra">
+        <div>
+          <p className="eyebrow">ESTADO DEL SITIO</p>
+          <p className="health-result" role="status">{health}</p>
+        </div>
+        <button className="health-button" type="button" disabled={checking} onClick={refreshHealth}>
+          {checking ? 'Consultando…' : 'Comprobar conexión'}
+        </button>
+      </section>
+      <div className="sample-tools">
+        <button className="counter" type="button" onClick={() => setCount((current) => current + 1)}>
+          Interacciones: {count}
+        </button>
+        <a href="/version.json">Ver datos de versión</a>
+        <details>
+          <summary>Detalles de despliegue</summary>
+          <dl>
+            <div><dt>Aplicación</dt><dd>{appInfo.app} {appInfo.version}</dd></div>
+            <div><dt>Framework</dt><dd>{appInfo.framework}</dd></div>
+            <div><dt>Despliegue</dt><dd>{appInfo.deploymentMarker}</dd></div>
+            <div><dt>Build</dt><dd>{appInfo.buildMarker}</dd></div>
+          </dl>
+        </details>
+      </div>
     </Layout>
   )
 }
 
 function Product() {
   return (
-    <Layout eyebrow="Client-side deep-link test" title="Widget 1">
-      <p>
-        This React Router route proves that navigation and direct requests to a
-        nested SPA path work when the host serves the SPA shell.
-      </p>
-      <nav>
-        <Link className="button" to="/">
-          Return home
-        </Link>
-      </nav>
+    <Layout>
+      <section className="route-message">
+        <p className="eyebrow">RUTA DE PRUEBA</p>
+        <h1>Widget 1</h1>
+        <p>La navegación directa de React Router funciona correctamente.</p>
+        <Link className="play-button route-button" to="/">Volver al catálogo</Link>
+      </section>
     </Layout>
   )
 }
 
 function NotFound() {
   return (
-    <Layout eyebrow="Client-side 404" title="Page not found">
-      <p>
-        The static host returned the SPA shell, and React Router handled this
-        unknown route.
-      </p>
-      <nav>
-        <Link className="button" to="/">
-          Return home
-        </Link>
-      </nav>
+    <Layout>
+      <section className="route-message">
+        <p className="eyebrow">ERROR 404</p>
+        <h1>Esta historia<br /><span>aún no existe.</span></h1>
+        <Link className="play-button route-button" to="/">Volver al catálogo</Link>
+      </section>
     </Layout>
   )
 }
